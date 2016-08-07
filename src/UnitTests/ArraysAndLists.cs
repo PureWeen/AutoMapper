@@ -99,6 +99,12 @@ namespace AutoMapper.UnitTests
                 public List<int> Values2 { get; set; }
 
                 public List<Source> Sources { get; set; }
+
+                public Source DestinationSimple
+                {
+                    get;
+                    private set;
+                }
             }
 
             public class Destination
@@ -129,6 +135,12 @@ namespace AutoMapper.UnitTests
                     get;
                     private set;
                 }
+
+                public  Destination  DestinationSimple
+                {
+                    get;
+                    private set;
+                }
             }
 
             protected override MapperConfiguration Configuration => new MapperConfiguration(cfg =>
@@ -147,10 +159,10 @@ namespace AutoMapper.UnitTests
                 var theSource2 =
                     new List<Source>
                     {
-                    new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } },
-                    new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } },
-                    new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } },
-                    new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } }
+                        new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } },
+                        new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } },
+                        new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } },
+                        new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } }
                     };
 
 
@@ -179,11 +191,10 @@ namespace AutoMapper.UnitTests
 
 
             [Fact]
-            public void Should_not_be_Empty()
+            public void Should_be_null()
             {
-
-                _destination.Destinations2.ShouldNotBeEmpty();
-                _destination.Destinations.ShouldNotBeEmpty();
+                
+                _destination.DestinationSimple.ShouldBeNull();
 
             }
         }
