@@ -93,29 +93,71 @@ namespace AutoMapper.UnitTests
 		{
 			private Destination _destination;
 
-			public class Source
-			{
-				public int[] Values { get; set; }
-				public List<int> Values2 { get; set; }
-			}
+            public class Source
+            {
+                public int[] Values { get; set; }
+                public List<int> Values2 { get; set; }
 
-			public class Destination
-			{
-				public IEnumerable<int> Values { get; set; }
-				public IEnumerable<string> Values2 { get; set; }
-			}
+                public List<Source> Sources { get; set; }
+            }
 
-		    protected override MapperConfiguration Configuration => new MapperConfiguration(cfg =>
+            public class Destination
+            {
+                List<Destination> _destinations;
+                public Destination()
+                {
+                    Values = new List<int>();
+                    _destinations = new List<Destination>();
+                    Destinations2 = new List<Destination>();
+                }
+                public List<int> Values { get; private set; }
+                public IEnumerable<string> Values2 { get; set; }
+                public List<Destination> Destinations
+                {
+                    get
+                    {
+
+                        if (_destinations == null)
+                            _destinations = new List<Destination>();
+                        return _destinations;
+                    }
+                }
+
+
+                public List<Destination> Destinations2
+                {
+                    get;
+                    private set;
+                }
+            }
+
+            protected override MapperConfiguration Configuration => new MapperConfiguration(cfg =>
 		    {
-		        cfg.CreateMap<Source, Destination>();
-		    });
+                cfg.CreateMap<Source, Destination>()
+                   .ForMember(x => x.Values, x => x.MapFrom(t => t.Values))
+                   .ForMember(x => x.Values2, x => x.MapFrom(t => t.Values2))
+                   .ForMember(x => x.Destinations, x => x.MapFrom(t => t.Sources))
+                   .ForMember(x => x.Destinations2, x => x.MapFrom(t => t.Sources));
+            });
 
-			protected override void Because_of()
-			{
-				_destination = Mapper.Map<Source, Destination>(new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } });
-			}
+            protected override void Because_of()
+            {
+                var theSource = new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } };
 
-			[Fact]
+                var theSource2 =
+                    new List<Source>
+                    {
+                    new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } },
+                    new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } },
+                    new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } },
+                    new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } }
+                    };
+
+
+                _destination = Mapper.Map<Source, Destination>(new Source { Sources = theSource2, Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } });
+            }
+
+            [Fact]
 			public void Should_map_the_list_of_source_items()
 			{
 				_destination.Values.ShouldNotBeNull();
@@ -134,7 +176,17 @@ namespace AutoMapper.UnitTests
 				_destination.Values2.ShouldContain("7");
 				_destination.Values2.ShouldContain("6");
 			}
-		}
+
+
+            [Fact]
+            public void Should_not_be_Empty()
+            {
+
+                _destination.Destinations2.ShouldNotBeEmpty();
+                _destination.Destinations.ShouldNotBeEmpty();
+
+            }
+        }
 
 		public class When_mapping_to_a_concrete_non_generic_icollection : AutoMapperSpecBase
 		{
