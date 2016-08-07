@@ -10,7 +10,7 @@ using System.Dynamic;
 
 namespace AutoMapper.UnitTests.ArraysAndLists
 {
-    public class When_mapping_null_list_to_array: AutoMapperSpecBase
+    public class When_mapping_null_list_to_array : AutoMapperSpecBase
     {
         Destination _destination;
 
@@ -98,7 +98,7 @@ namespace AutoMapper.UnitTests.ArraysAndLists
     {
         Author mappedAuthor;
 
-        protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(delegate{});
+        protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(delegate { });
 
         protected override void Because_of()
         {
@@ -164,479 +164,533 @@ namespace AutoMapper.UnitTests.ArraysAndLists
     }
 
     public class When_mapping_to_a_concrete_non_generic_ienumerable : AutoMapperSpecBase
-	{
-		private Destination _destination;
+    {
+        private Destination _destination;
 
-		public class Source
-		{
-			public int[] Values { get; set; }
-			public List<int> Values2 { get; set; }
-		}
+        public class Source
+        {
+            public int[] Values { get; set; }
+            public List<int> Values2 { get; set; }
+        }
 
-		public class Destination
-		{
-			public IEnumerable Values { get; set; }
-			public IEnumerable Values2 { get; set; }
-		}
+        public class Destination
+        {
+            public IEnumerable Values { get; set; }
+            public IEnumerable Values2 { get; set; }
+        }
 
-		protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
-		{
-		    cfg.CreateMap<Source, Destination>();
-		});
+        protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<Source, Destination>();
+        });
 
-		protected override void Because_of()
-		{
-			_destination = Mapper.Map<Source, Destination>(new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } });
-		}
+        protected override void Because_of()
+        {
+            _destination = Mapper.Map<Source, Destination>(new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } });
+        }
 
-		[Fact]
-		public void Should_map_the_list_of_source_items()
-		{
-			_destination.Values.ShouldNotBeNull();
-			_destination.Values.ShouldContain(1);
-			_destination.Values.ShouldContain(2);
-			_destination.Values.ShouldContain(3);
-			_destination.Values.ShouldContain(4);
-		}
+        [Fact]
+        public void Should_map_the_list_of_source_items()
+        {
+            _destination.Values.ShouldNotBeNull();
+            _destination.Values.ShouldContain(1);
+            _destination.Values.ShouldContain(2);
+            _destination.Values.ShouldContain(3);
+            _destination.Values.ShouldContain(4);
+        }
 
-		[Fact]
-		public void Should_map_from_the_generic_list_of_values()
-		{
-			_destination.Values2.ShouldNotBeNull();
-			_destination.Values2.ShouldContain(9);
-			_destination.Values2.ShouldContain(8);
-			_destination.Values2.ShouldContain(7);
-			_destination.Values2.ShouldContain(6);
-		}
-	}
+        [Fact]
+        public void Should_map_from_the_generic_list_of_values()
+        {
+            _destination.Values2.ShouldNotBeNull();
+            _destination.Values2.ShouldContain(9);
+            _destination.Values2.ShouldContain(8);
+            _destination.Values2.ShouldContain(7);
+            _destination.Values2.ShouldContain(6);
+        }
+    }
 
-	public class When_mapping_to_a_concrete_generic_ienumerable : AutoMapperSpecBase
-	{
-		private Destination _destination;
+    public class When_mapping_to_a_concrete_generic_ienumerable : AutoMapperSpecBase
+    {
+        private Destination _destination;
 
-		public class Source
-		{
-			public int[] Values { get; set; }
-			public List<int> Values2 { get; set; }
-		}
+        public class Source
+        {
+            List<Source> _Sources;
 
-		public class Destination
-		{
-			public IEnumerable<int> Values { get; set; }
-			public IEnumerable<string> Values2 { get; set; }
-		}
+            public int[] Values { get; set; }
+            public List<int> Values2 { get; set; }
 
-		protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
-		{
-		    cfg.CreateMap<Source, Destination>();
-		});
+            public List<Source> Sources { get {
+                    return _Sources;
+                } set { _Sources = value; } }
+        }
 
-		protected override void Because_of()
-		{
-			_destination = Mapper.Map<Source, Destination>(new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } });
-		}
+        public class Destination
+        {
+            List<Destination> _destinations;
+            public Destination()
+            {
+                Values = new List<int>();
+                Destinations2 = new List<Destination>();
+                _destinations = new List<Destination>();
+            }
+            public List<int> Values { get; private set; }
+            public IEnumerable<string> Values2 { get; set; }
+            public List<Destination> Destinations
+            {
+                get
+                {
+                    return _destinations;
+                }
+            }
 
-		[Fact]
-		public void Should_map_the_list_of_source_items()
-		{
-			_destination.Values.ShouldNotBeNull();
-			_destination.Values.ShouldContain(1);
-			_destination.Values.ShouldContain(2);
-			_destination.Values.ShouldContain(3);
-			_destination.Values.ShouldContain(4);
-		}
 
-		[Fact]
-		public void Should_map_from_the_generic_list_of_values_with_formatting()
-		{
-			_destination.Values2.ShouldNotBeNull();
-			_destination.Values2.ShouldContain("9");
-			_destination.Values2.ShouldContain("8");
-			_destination.Values2.ShouldContain("7");
-			_destination.Values2.ShouldContain("6");
-		}
-	}
+            public List<Destination> Destinations2
+            {
+                get;
+                private set;
+            }
+        }
 
-	public class When_mapping_to_a_concrete_non_generic_icollection : AutoMapperSpecBase
-	{
-		private Destination _destination;
+        protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<Source, Destination>()
+                .ForMember(x => x.Values, x => x.Ignore())
+                .ForMember(x => x.Values2, x => x.Ignore())
+                .ForMember(x => x.Destinations, x => x.MapFrom(t => t.Sources))
+                .ForMember(x => x.Destinations2, x => x.MapFrom(t => t.Sources));
+        });
 
-		public class Source
-		{
-			public int[] Values { get; set; }
-			public List<int> Values2 { get; set; }
-		}
+        protected override void Because_of()
+        {
+            var theSource = new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } };
 
-		public class Destination
-		{
-			public ICollection Values { get; set; }
-			public ICollection Values2 { get; set; }
-		}
+            var theSource2 =
+                new List<Source>
+                {
+                    new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } },
+                    new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } },
+                    new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } },
+                    new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } }
+                };
 
-		protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
-		{
-		    cfg.CreateMap<Source, Destination>();
-		});
 
-		protected override void Because_of()
-		{
-			_destination = Mapper.Map<Source, Destination>(new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } });
-		}
+            _destination = Mapper.Map<Source, Destination>(new Source { Sources = theSource2, Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } });
+        }
 
-		[Fact]
-		public void Should_map_the_list_of_source_items()
-		{
-			_destination.Values.ShouldNotBeNull();
-			_destination.Values.ShouldContain(1);
-			_destination.Values.ShouldContain(2);
-			_destination.Values.ShouldContain(3);
-			_destination.Values.ShouldContain(4);
-		}
+        [Fact]
+        public void Should_map_the_list_of_source_items()
+        {
+            _destination.Values.ShouldNotBeNull();
+            _destination.Values.ShouldContain(1);
+            _destination.Values.ShouldContain(2);
+            _destination.Values.ShouldContain(3);
+            _destination.Values.ShouldContain(4);
+        }
 
-		[Fact]
-		public void Should_map_from_a_non_array_source()
-		{
-			_destination.Values2.ShouldNotBeNull();
-			_destination.Values2.ShouldContain(9);
-			_destination.Values2.ShouldContain(8);
-			_destination.Values2.ShouldContain(7);
-			_destination.Values2.ShouldContain(6);
-		}
-	}
+        [Fact]
+        public void Should_map_from_the_generic_list_of_values_with_formatting()
+        {
+            _destination.Values2.ShouldNotBeNull();
+            _destination.Values2.ShouldContain("9");
+            _destination.Values2.ShouldContain("8");
+            _destination.Values2.ShouldContain("7");
+            _destination.Values2.ShouldContain("6");
 
-	public class When_mapping_to_a_concrete_generic_icollection : AutoMapperSpecBase
-	{
-		private Destination _destination;
+        }
 
-		public class Source
-		{
-			public int[] Values { get; set; }
-		}
 
-		public class Destination
-		{
-			public ICollection<string> Values { get; set; }
-		}
 
-		protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
-		{
-		    cfg.CreateMap<Source, Destination>();
-		});
 
-		protected override void Because_of()
-		{
-			_destination = Mapper.Map<Source, Destination>(new Source { Values = new[] { 1, 2, 3, 4 } });
-		}
+        [Fact]
+        public void Should_not_be_Empty()
+        {
+            _destination.Destinations2.ShouldNotBeEmpty();
+            _destination.Destinations.ShouldNotBeEmpty();
+        }
+    }
 
-		[Fact]
-		public void Should_map_the_list_of_source_items()
-		{
-			_destination.Values.ShouldNotBeNull();
-			_destination.Values.ShouldContain("1");
-			_destination.Values.ShouldContain("2");
-			_destination.Values.ShouldContain("3");
-			_destination.Values.ShouldContain("4");
-		}
-	}
+    public class When_mapping_to_a_concrete_non_generic_icollection : AutoMapperSpecBase
+    {
+        private Destination _destination;
 
-	public class When_mapping_to_a_concrete_ilist : AutoMapperSpecBase
-	{
-		private Destination _destination;
+        public class Source
+        {
+            public int[] Values { get; set; }
+            public List<int> Values2 { get; set; }
+        }
 
-		public class Source
-		{
-			public int[] Values { get; set; }
-		}
+        public class Destination
+        {
+            public ICollection Values { get; set; }
+            public ICollection Values2 { get; set; }
+        }
 
-		public class Destination
-		{
-			public IList Values { get; set; }
-		}
+        protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<Source, Destination>();
+        });
 
-		protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
-		{
-		    cfg.CreateMap<Source, Destination>();
-		});
+        protected override void Because_of()
+        {
+            _destination = Mapper.Map<Source, Destination>(new Source { Values = new[] { 1, 2, 3, 4 }, Values2 = new List<int> { 9, 8, 7, 6 } });
+        }
 
-		protected override void Because_of()
-		{
-			_destination = Mapper.Map<Source, Destination>(new Source { Values = new[] { 1, 2, 3, 4 } });
-		}
+        [Fact]
+        public void Should_map_the_list_of_source_items()
+        {
+            _destination.Values.ShouldNotBeNull();
+            _destination.Values.ShouldContain(1);
+            _destination.Values.ShouldContain(2);
+            _destination.Values.ShouldContain(3);
+            _destination.Values.ShouldContain(4);
+        }
 
-		[Fact]
-		public void Should_map_the_list_of_source_items()
-		{
-			_destination.Values.ShouldNotBeNull();
-			_destination.Values.ShouldContain(1);
-			_destination.Values.ShouldContain(2);
-			_destination.Values.ShouldContain(3);
-			_destination.Values.ShouldContain(4);
-		}
-	}
+        [Fact]
+        public void Should_map_from_a_non_array_source()
+        {
+            _destination.Values2.ShouldNotBeNull();
+            _destination.Values2.ShouldContain(9);
+            _destination.Values2.ShouldContain(8);
+            _destination.Values2.ShouldContain(7);
+            _destination.Values2.ShouldContain(6);
+        }
+    }
 
-	public class When_mapping_to_a_concrete_generic_ilist : AutoMapperSpecBase
-	{
-		private Destination _destination;
+    public class When_mapping_to_a_concrete_generic_icollection : AutoMapperSpecBase
+    {
+        private Destination _destination;
 
-		public class Source
-		{
-			public int[] Values { get; set; }
-		}
+        public class Source
+        {
+            public int[] Values { get; set; }
+        }
 
-		public class Destination
-		{
-			public IList<string> Values { get; set; }
-		}
+        public class Destination
+        {
+            public ICollection<string> Values { get; set; }
+        }
 
-		protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
-		{
-		    cfg.CreateMap<Source, Destination>();
-		});
+        protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<Source, Destination>();
+        });
 
-		protected override void Because_of()
-		{
-			_destination = Mapper.Map<Source, Destination>(new Source { Values = new[] { 1, 2, 3, 4 } });
-		}
+        protected override void Because_of()
+        {
+            _destination = Mapper.Map<Source, Destination>(new Source { Values = new[] { 1, 2, 3, 4 } });
+        }
 
-		[Fact]
-		public void Should_map_the_list_of_source_items()
-		{
-			_destination.Values.ShouldNotBeNull();
-			_destination.Values.ShouldContain("1");
-			_destination.Values.ShouldContain("2");
-			_destination.Values.ShouldContain("3");
-			_destination.Values.ShouldContain("4");
-		}
-	}
+        [Fact]
+        public void Should_map_the_list_of_source_items()
+        {
+            _destination.Values.ShouldNotBeNull();
+            _destination.Values.ShouldContain("1");
+            _destination.Values.ShouldContain("2");
+            _destination.Values.ShouldContain("3");
+            _destination.Values.ShouldContain("4");
+        }
+    }
 
-	public class When_mapping_to_a_custom_list_with_the_same_type : AutoMapperSpecBase
-	{
-		private Destination _destination;
-		private Source _source;
+    public class When_mapping_to_a_concrete_ilist : AutoMapperSpecBase
+    {
+        private Destination _destination;
 
-		public class ValueCollection : Collection<int>
-		{
-		}
+        public class Source
+        {
+            public int[] Values { get; set; }
+        }
 
-		public class Source
-		{
-			public ValueCollection Values { get; set; }
-		}
+        public class Destination
+        {
+            public IList Values { get; set; }
+        }
 
-		public class Destination
-		{
-			public ValueCollection Values { get; set; }
-		}
+        protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<Source, Destination>();
+        });
 
-		protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
-		{
-		    cfg.CreateMap<Source, Destination>();
-		});
+        protected override void Because_of()
+        {
+            _destination = Mapper.Map<Source, Destination>(new Source { Values = new[] { 1, 2, 3, 4 } });
+        }
 
-		protected override void Because_of()
-		{
-			_source = new Source { Values = new ValueCollection { 1, 2, 3, 4 } };
-			_destination = Mapper.Map<Source, Destination>(_source);
-		}
+        [Fact]
+        public void Should_map_the_list_of_source_items()
+        {
+            _destination.Values.ShouldNotBeNull();
+            _destination.Values.ShouldContain(1);
+            _destination.Values.ShouldContain(2);
+            _destination.Values.ShouldContain(3);
+            _destination.Values.ShouldContain(4);
+        }
+    }
 
-		[Fact]
-		public void Should_assign_the_value_directly()
-		{
-			_source.Values.ShouldEqual(_destination.Values);
-		}
-	}
+    public class When_mapping_to_a_concrete_generic_ilist : AutoMapperSpecBase
+    {
+        private Destination _destination;
 
-	public class When_mapping_to_a_custom_collection_with_the_same_type_not_implementing_IList : AutoMapperSpecBase
-	{
-		private Source _source;
+        public class Source
+        {
+            public int[] Values { get; set; }
+        }
 
-		private Destination _destination;
+        public class Destination
+        {
+            public IList<string> Values { get; set; }
+        }
 
-		public class ValueCollection : IEnumerable<int>
-		{
-			private List<int> implementation = new List<int>();
+        protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<Source, Destination>();
+        });
 
-			public ValueCollection(IEnumerable<int> items)
-			{
-				implementation = items.ToList();
-			}
+        protected override void Because_of()
+        {
+            _destination = Mapper.Map<Source, Destination>(new Source { Values = new[] { 1, 2, 3, 4 } });
+        }
 
-			public IEnumerator<int> GetEnumerator()
-			{
-				return implementation.GetEnumerator();
-			}
+        [Fact]
+        public void Should_map_the_list_of_source_items()
+        {
+            _destination.Values.ShouldNotBeNull();
+            _destination.Values.ShouldContain("1");
+            _destination.Values.ShouldContain("2");
+            _destination.Values.ShouldContain("3");
+            _destination.Values.ShouldContain("4");
+        }
+    }
 
-			IEnumerator IEnumerable.GetEnumerator()
-			{
-				return ((IEnumerable)implementation).GetEnumerator();
-			}
-		}
+    public class When_mapping_to_a_custom_list_with_the_same_type : AutoMapperSpecBase
+    {
+        private Destination _destination;
+        private Source _source;
 
-		public class Source
-		{
-			public ValueCollection Values { get; set; }
-		}
+        public class ValueCollection : Collection<int>
+        {
+        }
 
-		public class Destination
-		{
-			public ValueCollection Values { get; set; }
-		}
+        public class Source
+        {
+            public ValueCollection Values { get; set; }
+        }
 
-		protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
-		{
-		    cfg.CreateMap<Source, Destination>();
-		});
+        public class Destination
+        {
+            public ValueCollection Values { get; set; }
+        }
 
-		protected override void Establish_context()
-		{
+        protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<Source, Destination>();
+        });
+
+        protected override void Because_of()
+        {
+            _source = new Source { Values = new ValueCollection { 1, 2, 3, 4 } };
+            _destination = Mapper.Map<Source, Destination>(_source);
+        }
+
+        [Fact]
+        public void Should_assign_the_value_directly()
+        {
+            _source.Values.ShouldEqual(_destination.Values);
+        }
+    }
+
+    public class When_mapping_to_a_custom_collection_with_the_same_type_not_implementing_IList : AutoMapperSpecBase
+    {
+        private Source _source;
+
+        private Destination _destination;
+
+        public class ValueCollection : IEnumerable<int>
+        {
+            private List<int> implementation = new List<int>();
+
+            public ValueCollection(IEnumerable<int> items)
+            {
+                implementation = items.ToList();
+            }
+
+            public IEnumerator<int> GetEnumerator()
+            {
+                return implementation.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return ((IEnumerable)implementation).GetEnumerator();
+            }
+        }
+
+        public class Source
+        {
+            public ValueCollection Values { get; set; }
+        }
+
+        public class Destination
+        {
+            public ValueCollection Values { get; set; }
+        }
+
+        protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<Source, Destination>();
+        });
+
+        protected override void Establish_context()
+        {
             _source = new Source { Values = new ValueCollection(new[] { 1, 2, 3, 4 }) };
         }
 
         protected override void Because_of()
-		{
-			_destination = Mapper.Map<Source, Destination>(_source);
-		}
+        {
+            _destination = Mapper.Map<Source, Destination>(_source);
+        }
 
-		[Fact]
-		public void Should_map_the_list_of_source_items()
-		{
-			// here not the EnumerableMapper is used, but just the AssignableMapper!
-			_destination.Values.ShouldBeSameAs(_source.Values);
-			_destination.Values.ShouldNotBeNull();
-			_destination.Values.ShouldContain(1);
-			_destination.Values.ShouldContain(2);
-			_destination.Values.ShouldContain(3);
-			_destination.Values.ShouldContain(4);
-		}
-	}
+        [Fact]
+        public void Should_map_the_list_of_source_items()
+        {
+            // here not the EnumerableMapper is used, but just the AssignableMapper!
+            _destination.Values.ShouldBeSameAs(_source.Values);
+            _destination.Values.ShouldNotBeNull();
+            _destination.Values.ShouldContain(1);
+            _destination.Values.ShouldContain(2);
+            _destination.Values.ShouldContain(3);
+            _destination.Values.ShouldContain(4);
+        }
+    }
 
-	public class When_mapping_to_a_collection_with_instantiation_managed_by_the_destination : AutoMapperSpecBase
-	{
-		private Destination _destination;
-		private Source _source;
+    public class When_mapping_to_a_collection_with_instantiation_managed_by_the_destination : AutoMapperSpecBase
+    {
+        private Destination _destination;
+        private Source _source;
 
-		public class SourceItem
-		{
-			public int Value { get; set; }
-		}
+        public class SourceItem
+        {
+            public int Value { get; set; }
+        }
 
-		public class DestItem
-		{
-			public int Value { get; set; }
-		}
+        public class DestItem
+        {
+            public int Value { get; set; }
+        }
 
-		public class Source
-		{
-			public List<SourceItem> Values { get; set; }
-		}
+        public class Source
+        {
+            public List<SourceItem> Values { get; set; }
+        }
 
-		public class Destination
-		{
-			private List<DestItem> _values = new List<DestItem>();
+        public class Destination
+        {
+            private List<DestItem> _values = new List<DestItem>();
 
-			public List<DestItem> Values
-			{
-				get { return _values; }
-			}
-		}
-
-		protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
-		{
-		    cfg.CreateMap<Source, Destination>()
-		        .ForMember(dest => dest.Values, opt => opt.UseDestinationValue());
-		    cfg.CreateMap<SourceItem, DestItem>();
-		});
-
-		protected override void Because_of()
-		{
-			_source = new Source { Values = new List<SourceItem> { new SourceItem { Value = 5 }, new SourceItem { Value = 10 } } };
-			_destination = Mapper.Map<Source, Destination>(_source);
-		}
-
-		[Fact]
-		public void Should_assign_the_value_directly()
-		{
-			_destination.Values.Count.ShouldEqual(2);
-			_destination.Values[0].Value.ShouldEqual(5);
-			_destination.Values[1].Value.ShouldEqual(10);
-		}
-	}
-
-	public class When_mapping_to_an_existing_list_with_existing_items : AutoMapperSpecBase
-	{
-		private Destination _destination;
-		private Source _source;
-
-		public class SourceItem
-		{
-			public int Value { get; set; }
-		}
-
-		public class DestItem
-		{
-			public int Value { get; set; }
-		}
-
-		public class Source
-		{
-			public List<SourceItem> Values { get; set; }
-		}
-
-		public class Destination
-		{
-			private List<DestItem> _values = new List<DestItem>();
-
-			public List<DestItem> Values
-			{
-				get { return _values; }
-			}
-		}
-
-		protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
-		{
-		    cfg.CreateMap<Source, Destination>()
-		        .ForMember(dest => dest.Values, opt => opt.UseDestinationValue());
-		    cfg.CreateMap<SourceItem, DestItem>();
-		});
-
-		protected override void Because_of()
-		{
-			_source = new Source { Values = new List<SourceItem> { new SourceItem { Value = 5 }, new SourceItem { Value = 10 } } };
-			_destination = new Destination();
-			_destination.Values.Add(new DestItem());
-			Mapper.Map(_source, _destination);
-		}
-
-		[Fact]
-		public void Should_clear_the_list_before_mapping()
-		{
-			_destination.Values.Count.ShouldEqual(2);
-		}
-	}
-
-	public class When_mapping_a_collection_with_null_members : AutoMapperSpecBase
-	{
-		const string FirstString = null;
-
-		private IEnumerable<string> _strings = new List<string> { FirstString };
-		private List<string> _mappedStrings = new List<string>();
+            public List<DestItem> Values
+            {
+                get { return _values; }
+            }
+        }
 
         protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
-		{
-		    cfg.AllowNullDestinationValues = true;
-		});
+        {
+            cfg.CreateMap<Source, Destination>()
+                .ForMember(dest => dest.Values, opt => opt.UseDestinationValue());
+            cfg.CreateMap<SourceItem, DestItem>();
+        });
 
-		protected override void Because_of()
-		{
-			_mappedStrings = Mapper.Map<IEnumerable<string>, List<string>>(_strings);
-		}
+        protected override void Because_of()
+        {
+            _source = new Source { Values = new List<SourceItem> { new SourceItem { Value = 5 }, new SourceItem { Value = 10 } } };
+            _destination = Mapper.Map<Source, Destination>(_source);
+        }
 
-		[Fact]
-		public void Should_map_correctly()
-		{
-			_mappedStrings.ShouldNotBeNull();
-			_mappedStrings.Count.ShouldEqual(1);
-			_mappedStrings[0].ShouldBeNull();
-		}
-	}
+        [Fact]
+        public void Should_assign_the_value_directly()
+        {
+            _destination.Values.Count.ShouldEqual(2);
+            _destination.Values[0].Value.ShouldEqual(5);
+            _destination.Values[1].Value.ShouldEqual(10);
+        }
+    }
+
+    public class When_mapping_to_an_existing_list_with_existing_items : AutoMapperSpecBase
+    {
+        private Destination _destination;
+        private Source _source;
+
+        public class SourceItem
+        {
+            public int Value { get; set; }
+        }
+
+        public class DestItem
+        {
+            public int Value { get; set; }
+        }
+
+        public class Source
+        {
+            public List<SourceItem> Values { get; set; }
+        }
+
+        public class Destination
+        {
+            private List<DestItem> _values = new List<DestItem>();
+
+            public List<DestItem> Values
+            {
+                get { return _values; }
+            }
+        }
+
+        protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<Source, Destination>()
+                .ForMember(dest => dest.Values, opt => opt.UseDestinationValue());
+            cfg.CreateMap<SourceItem, DestItem>();
+        });
+
+        protected override void Because_of()
+        {
+            _source = new Source { Values = new List<SourceItem> { new SourceItem { Value = 5 }, new SourceItem { Value = 10 } } };
+            _destination = new Destination();
+            _destination.Values.Add(new DestItem());
+            Mapper.Map(_source, _destination);
+        }
+
+        [Fact]
+        public void Should_clear_the_list_before_mapping()
+        {
+            _destination.Values.Count.ShouldEqual(2);
+        }
+    }
+
+    public class When_mapping_a_collection_with_null_members : AutoMapperSpecBase
+    {
+        const string FirstString = null;
+
+        private IEnumerable<string> _strings = new List<string> { FirstString };
+        private List<string> _mappedStrings = new List<string>();
+
+        protected override MapperConfiguration Configuration { get; } = new MapperConfiguration(cfg =>
+        {
+            cfg.AllowNullDestinationValues = true;
+        });
+
+        protected override void Because_of()
+        {
+            _mappedStrings = Mapper.Map<IEnumerable<string>, List<string>>(_strings);
+        }
+
+        [Fact]
+        public void Should_map_correctly()
+        {
+            _mappedStrings.ShouldNotBeNull();
+            _mappedStrings.Count.ShouldEqual(1);
+            _mappedStrings[0].ShouldBeNull();
+        }
+    }
 }
