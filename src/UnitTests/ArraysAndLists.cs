@@ -223,7 +223,13 @@ namespace AutoMapper.UnitTests.ArraysAndLists
 
             public List<Source> Sources { get {
                     return _Sources;
-                } set { _Sources = value; } }
+                } set { _Sources = value; }
+            }
+            public List<Source> DestinationsSimple
+            {
+                get;
+                private set;
+            }
         }
 
         public class Destination
@@ -244,6 +250,11 @@ namespace AutoMapper.UnitTests.ArraysAndLists
                     return _destinations;
                 }
             }
+            public List<Destination> DestinationsSimple
+            {
+                get;
+                private set;
+            }
 
 
             public List<Destination> Destinations2
@@ -259,7 +270,8 @@ namespace AutoMapper.UnitTests.ArraysAndLists
                 .ForMember(x => x.Values, x => x.Ignore())
                 .ForMember(x => x.Values2, x => x.Ignore())
                 .ForMember(x => x.Destinations, x => x.MapFrom(t => t.Sources))
-                .ForMember(x => x.Destinations2, x => x.MapFrom(t => t.Sources));
+                .ForMember(x => x.Destinations2, x => x.MapFrom(t => t.Sources))
+                .ForAllMembers(x=>x.UseDestinationValue());
         });
 
         protected override void Because_of()
@@ -304,10 +316,9 @@ namespace AutoMapper.UnitTests.ArraysAndLists
 
 
         [Fact]
-        public void Should_not_be_Empty()
+        public void Should_be_null()
         {
-            _destination.Destinations2.ShouldNotBeEmpty();
-            _destination.Destinations.ShouldNotBeEmpty();
+            _destination.DestinationsSimple.ShouldBeNull();
         }
     }
 
